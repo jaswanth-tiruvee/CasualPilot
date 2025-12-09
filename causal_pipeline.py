@@ -141,7 +141,8 @@ class CausalInferencePipeline:
             raise ValueError(f"Unknown method: {method}")
         
         # Fit the estimator
-        print(f"Fitting {method.upper()} estimator...")
+        # Note: print statements removed for Streamlit compatibility
+        # Use st.write() in app.py instead
         self.hte_estimator.fit(y_train, T_train, X=X_train)
         
         # Predict HTE on test set
@@ -152,9 +153,6 @@ class CausalInferencePipeline:
         
         # Calculate average treatment effect
         self.ate = np.mean(self.hte_predictions)
-        
-        print(f"Average Treatment Effect (ATE): {self.ate:.4f}")
-        print(f"HTE Range: [{np.min(self.hte_predictions):.4f}, {np.max(self.hte_predictions):.4f}]")
         
         return self.hte_predictions, X_test
     

@@ -60,26 +60,45 @@ if st.sidebar.button("Run Causal Inference"):
     if st.session_state.data is None:
         st.error("Please generate data first!")
     else:
-        with st.spinner("Running causal inference pipeline..."):
-            # Initialize pipeline
-            pipeline = CausalInferencePipeline(
-                st.session_state.data,
-                treatment='treatment',
-                outcome='outcome'
-            )
-            
-            # Identify causal effect
-            confounders = ['age', 'income', 'purchase_history', 'engagement_score']
-            identified_estimand = pipeline.identify_causal_effect(confounders=confounders)
-            st.session_state.identified_estimand = identified_estimand
-            
-            # Estimate HTE
-            hte_predictions, X_test = pipeline.estimate_hte(method=hte_method)
-            st.session_state.pipeline = pipeline
-            st.session_state.hte_predictions = pipeline.hte_predictions_full
-            st.session_state.X_test = X_test
-            
-            st.success("Causal inference complete!")
+        try:
+            with st.spinner("Running causal inference pipeline..."):
+                # Initialize pipeline
+                pipeline = CausalInferencePipeline(
+                    st.session_state.data,
+                    treatment='treatment',
+                    outcome='outcome'
+                )
+                
+                # Identify causal effect
+                confounders = ['age', 'income', 'purchase_history', 'engagement_score']
+                identified_estimand = pipeline.identify_causal_effect(confounders=confounders)
+                st.session_state.identified_estimand = identified_estimand
+                
+                # Estimate HTE
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                status_text.text("Fitting HTE estimator...")
+                progress_bar.progress(30)
+                
+                hte_predictions, X_test = pipeline.estimate_hte(method=hte_method)
+                
+                progress_bar.progress(80)
+                status_text.text("Finalizing results...")
+                
+                st.session_state.pipeline = pipeline
+                st.session_state.hte_predictions = pipeline.hte_predictions_full
+                st.session_state.X_test = X_test
+                
+                progress_bar.progress(100)
+                status_text.empty()
+                progress_bar.empty()
+                
+                st.success("Causal inference complete!")
+                st.info(f"Average Treatment Effect (ATE): {pipeline.ate:.4f}")
+        except Exception as e:
+            st.error(f"Error during causal inference: {str(e)}")
+            st.exception(e)
 
 # Main content
 if st.session_state.data is not None:
