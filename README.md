@@ -1,5 +1,9 @@
 # CausalPilot: The Treatment Effect Simulator
 
+## Live App
+https://autoo-ops.streamlit.app/
+
+
 **Resume Pitch:** "Engineered a Causal Inference Engine using DoWhy/EconML to model and simulate the Heterogeneous Treatment Effect (HTE) of marketing campaigns, enabling optimal targeting strategies that boosted simulated ROI by 18%."
 
 ## 🎯 Overview
