@@ -1,11 +1,18 @@
+# Core dependencies - tested versions compatible with Python 3.11-3.13
 streamlit>=1.28.0
-numpy>=1.26.0
-pandas>=2.0.0
+numpy>=1.26.0,<2.0.0
+pandas>=2.0.0,<2.3.0
 scikit-learn>=1.4.0
-scipy>=1.11.0
+scipy>=1.11.0,<1.14.0
 plotly>=5.17.0
 matplotlib>=3.8.0
 seaborn>=0.13.0
+
+# Causal inference libraries
+# Note: These may take time to install due to dependencies
 dowhy>=0.11.0
 econml>=0.14.0
+
+# Ensure Cython is available for any compilation
+cython>=3.0.0
 
