@@ -1,3 +1,0 @@
-# System packages (if needed)
-# Streamlit Cloud uses Ubuntu, most packages are pre-installed
-
