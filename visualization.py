@@ -81,15 +81,24 @@ class HTEVisualizer:
             )
         else:
             # Numerical feature
+            # Convert to numpy arrays and handle missing values
+            x_vals = np.asarray(feature_values, dtype=np.float64)
+            y_vals = np.asarray(self.hte_predictions, dtype=np.float64)
+            
+            # Remove NaN and inf values
+            valid_mask = np.isfinite(x_vals) & np.isfinite(y_vals)
+            x_vals_clean = x_vals[valid_mask]
+            y_vals_clean = y_vals[valid_mask]
+            
             fig = go.Figure()
             fig.add_trace(go.Scatter(
-                x=feature_values,
-                y=self.hte_predictions,
+                x=x_vals_clean,
+                y=y_vals_clean,
                 mode='markers',
                 marker=dict(
                     size=5,
                     opacity=0.6,
-                    color=self.hte_predictions,
+                    color=y_vals_clean,
                     colorscale='Viridis',
                     showscale=True,
                     colorbar=dict(title="HTE")
@@ -97,17 +106,22 @@ class HTEVisualizer:
                 name='HTE'
             ))
             
-            # Add trend line
-            z = np.polyfit(feature_values, self.hte_predictions, 1)
-            p = np.poly1d(z)
-            sorted_idx = np.argsort(feature_values)
-            fig.add_trace(go.Scatter(
-                x=feature_values.iloc[sorted_idx],
-                y=p(feature_values.iloc[sorted_idx]),
-                mode='lines',
-                name='Trend',
-                line=dict(color='red', width=2)
-            ))
+            # Add trend line only if we have valid data points
+            if len(x_vals_clean) > 1:
+                try:
+                    z = np.polyfit(x_vals_clean, y_vals_clean, 1)
+                    p = np.poly1d(z)
+                    sorted_idx = np.argsort(x_vals_clean)
+                    fig.add_trace(go.Scatter(
+                        x=x_vals_clean[sorted_idx],
+                        y=p(x_vals_clean[sorted_idx]),
+                        mode='lines',
+                        name='Trend',
+                        line=dict(color='red', width=2)
+                    ))
+                except (np.linalg.LinAlgError, ValueError) as e:
+                    # If polyfit fails (e.g., all x values are the same), skip trend line
+                    pass
             
             fig.update_layout(
                 title=f'HTE Distribution by {feature_name}',
