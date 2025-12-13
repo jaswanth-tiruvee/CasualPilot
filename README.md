@@ -344,7 +344,3 @@ This project is open source and available for educational and professional use.
 
 For questions or contributions, please open an issue or submit a pull request.
 
----
-
-**Built with ❤️ for understanding causality in marketing**
-
